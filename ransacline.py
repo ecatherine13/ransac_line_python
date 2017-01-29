@@ -81,6 +81,37 @@ def findError(x, y, m, c):
 
     return sum
 
+def findOutliers(x, y, m, c):
+    #Repeats the process to find the distance of all points (not very efficient, but it works)
+    distance_list = []
+    x_outlier = []
+    y_outlier = []
+    for i in range(0, len(x)):
+        num = abs(m*x[i] - y[i] + c)
+        den = math.sqrt(m**2 + 1)
+        distance_list.append(num / den)
+
+    #Bonus. Identify the outliers and inliers. Define a threshold based mean + k*std of distances.
+    #I'll choose k = 0.3
+    avg_distance = np.mean(distance_list)
+    std_distance = np.std(distance_list)
+    print("mean distance = " + str(avg_distance))
+    print("standard deviation of distance = " + str(std_distance))
+    for i in range(0, len(x)):
+        num = abs(m*x[i] - y[i] + c)
+        den = math.sqrt(m**2 + 1)
+        distance = num / den
+        if (distance > avg_distance + 0.3*std_distance):
+            #print("(" + str(x[i]) + ", " + str(y[i]) + ") is outlier")
+            #x.remove(x[i])
+            x_outlier.append(x[i])
+            #y.remove(y[i])
+            y_outlier.append(y[i])
+        #else:
+            #print("(" + str(x[i]) + ", " + str(y[i]) + ") is inlier")
+
+    return x_outlier, y_outlier
+
 #x = x coordinates of the datapoints
 #y = y coordinates of the datapoints
 def RANSAC(x,y):
@@ -115,10 +146,13 @@ def main():
 
     sol_m,solution_c=RANSAC(x,y)
 
+    x_outlier, y_outlier = findOutliers(x, y, sol_m, solution_c)
+
     sol_x,sol_y=GenerateLineNoNoise(sol_m,solution_c,30)
 
     #Plot data and solution
     plt.plot(x,y,'ro')
+    plt.plot(x_outlier, y_outlier, 'go') #plot the outliers in green
     plt.plot(sol_x,sol_y,linewidth=2.0)
     plt.show()
 
