@@ -123,7 +123,8 @@ def RANSAC(x,y):
 	## Libraries are limited to the already added ones and the standard python ones
 
     # Randomly select N points. In CreateProblem(), the number of points seems to be 300. I'll start with 75, and 1000 iterations
-    N = 75;
+    # Correction, N should ideally be 2, though on this specific problem the difference in error is fairly insignificant.
+    N = 2;
     iterations = 1000
     min_error = float("inf") #set the initial error to be effectively infinite
 
